@@ -1,4 +1,3 @@
-# admin(autocred).py
 import streamlit as st
 from datetime import datetime
 import firebase_admin
@@ -20,7 +19,6 @@ firebase_cred = credentials.Certificate({
 
 firebase_admin.initialize_app(firebase_cred)
 db = firestore.client()
-
 
 # Function to add a client with email, expiry date, and permissions
 def add_client(email, expiry_date, permissions):
@@ -47,8 +45,7 @@ def admin_dashboard():
     # Section to add a new client's email, permissions, and expiry date
     email = st.text_input("Enter client's email for account creation approval:")
     expiry_date = st.date_input("Set expiry date for the client", value=datetime(2024, 12, 31))
-    dashboards = st.multiselect("Dashboards to provide access to:", ['dashboard1', 
-'dashboard2', 'dashboard3', 'dashboard4', 'dashboard5', 'dashboard6'])
+    dashboards = st.multiselect("Dashboards to provide access to:", ['dashboard1', 'dashboard2', 'dashboard3', 'dashboard4', 'dashboard5', 'dashboard6'])
 
     if st.button("Add Client"):
         if email and dashboards:
@@ -66,8 +63,8 @@ def admin_dashboard():
         client_data = client.to_dict()
         login_status = "Logged In" if client_data['login_status'] == 1 else "Logged Out"
         st.write(f"**Username:** {client_data['username']} | **Email:** {client_data['email']} | "
-         f"**Expiry Date:** {client_data['expiry_date']} | **Dashboards Access:** {', '.join(client_data['permissions'])} | "
-         f"**Status:** {login_status}")
+                 f"**Expiry Date:** {client_data['expiry_date']} | **Dashboards Access:** {', '.join(client_data['permissions'])} | "
+                 f"**Status:** {login_status}")
         
         # Add a button to reset the login status for each client
         if login_status == "Logged In":
@@ -78,4 +75,3 @@ def admin_dashboard():
 # Run the admin dashboard
 if __name__ == "__main__":
     admin_dashboard()
-
