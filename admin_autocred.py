@@ -72,9 +72,9 @@ def admin_dashboard():
     for client in clients:
         client_data = client.to_dict()
         login_status = "Logged In" if client_data['login_status'] == 1 else "Logged Out"
-        st.write(f"**Username:** {client_data['username']} | **Email:** {client_data['email']} 
-| **Expiry Date:** {client_data['expiry_date']} | **Dashboards Access:** {', 
-'.join(client_data['permissions'])} | **Status:** {login_status}")
+        st.write(f"**Username:** {client_data['username']} | **Email:** {client_data['email']} | "
+         f"**Expiry Date:** {client_data['expiry_date']} | **Dashboards Access:** {', '.join(client_data['permissions'])} | "
+         f"**Status:** {login_status}")
         
         # Add a button to reset the login status for each client
         if login_status == "Logged In":
