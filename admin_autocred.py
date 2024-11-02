@@ -1,29 +1,17 @@
-import streamlit as st
-from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
+import streamlit as st
+import json
 
-# Replacing \\n with \n to format private_key correctly
-private_key = st.secrets["private_key"].replace("\\n", "\n")
+# Load the Firebase credentials from Streamlit Secrets as a JSON string
+firebase_cred_dict = json.loads(st.secrets["firebase_credentials"])
 
-firebase_cred = credentials.Certificate({
-    "type": st.secrets["type"],
-    "project_id": st.secrets["project_id"],
-    "private_key_id": st.secrets["private_key_id"],
-    "private_key": private_key,
-    "client_email": st.secrets["client_email"],
-    "client_id": st.secrets["client_id"],
-    "auth_uri": st.secrets["auth_uri"],
-    "token_uri": st.secrets["token_uri"],
-    "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
-    "client_x509_cert_url": st.secrets["client_x509_cert_url"]
-})
-
+# Initialize Firebase with the parsed credentials dictionary
+firebase_cred = credentials.Certificate(firebase_cred_dict)
 firebase_admin.initialize_app(firebase_cred)
 db = firestore.client()
 
-
-# Function to add a client with email, expiry date, and permissions
+# Remaining admin dashboard code
 def add_client(email, expiry_date, permissions):
     username = email.split('@')[0]
     client_data = {
@@ -36,16 +24,13 @@ def add_client(email, expiry_date, permissions):
     }
     db.collection('clients').document(username).set(client_data)
 
-# Function to update login status
 def update_login_status(username, status):
     db.collection('clients').document(username).update({'login_status': status})
 
-# Admin Dashboard Interface
 def admin_dashboard():
     st.title("Admin Dashboard")
     st.write("Add approved emails with permissions and expiry dates for client access.")
 
-    # Section to add a new client's email, permissions, and expiry date
     email = st.text_input("Enter client's email for account creation approval:")
     expiry_date = st.date_input("Set expiry date for the client", value=datetime(2024, 12, 31))
     dashboards = st.multiselect("Dashboards to provide access to:", ['dashboard1', 'dashboard2', 'dashboard3', 'dashboard4', 'dashboard5', 'dashboard6'])
@@ -59,7 +44,6 @@ def admin_dashboard():
 
     st.write("---")
 
-    # Display all clients with their email, permissions, and expiry dates
     clients = db.collection('clients').stream()
     st.write("### Approved Clients:")
     for client in clients:
@@ -69,7 +53,6 @@ def admin_dashboard():
                  f"**Expiry Date:** {client_data['expiry_date']} | **Dashboards Access:** {', '.join(client_data['permissions'])} | "
                  f"**Status:** {login_status}")
         
-        # Add a button to reset the login status for each client
         if login_status == "Logged In":
             if st.button(f"Reset Login Status for {client_data['username']}"):
                 update_login_status(client_data['username'], 0)
