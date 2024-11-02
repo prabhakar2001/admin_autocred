@@ -4,10 +4,23 @@ from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Load Firebase credentials from the JSON file
-firebase_cred = credentials.Certificate("firebase_key.json")
+# Initialize Firebase using Streamlit Secrets
+firebase_cred = credentials.Certificate({
+    "type": st.secrets["type"],
+    "project_id": st.secrets["project_id"],
+    "private_key_id": st.secrets["private_key_id"],
+    "private_key": st.secrets["private_key"],
+    "client_email": st.secrets["client_email"],
+    "client_id": st.secrets["client_id"],
+    "auth_uri": st.secrets["auth_uri"],
+    "token_uri": st.secrets["token_uri"],
+    "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": st.secrets["client_x509_cert_url"]
+})
+
 firebase_admin.initialize_app(firebase_cred)
 db = firestore.client()
+
 
 # Function to add a client with email, expiry date, and permissions
 def add_client(email, expiry_date, permissions):
