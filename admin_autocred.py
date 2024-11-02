@@ -173,13 +173,14 @@ auth = firebase.auth()
 db_rtdb = firebase.database()
 storage = firebase.storage()
 
+# Function to initialize Firebase Admin SDK and return Firestore client
 def initialize_firebase_admin():
     if not firebase_admin._apps:
         firebase_cred = credentials.Certificate({
             "type": st.secrets["firebase_credentials"]["type"],
             "project_id": st.secrets["firebase_credentials"]["project_id"],
             "private_key_id": st.secrets["firebase_credentials"]["private_key_id"],
-            "private_key": st.secrets["firebase_credentials"]["private_key"],
+            "private_key": st.secrets["firebase_credentials"]["private_key"].replace("\\n", "\n"),
             "client_email": st.secrets["firebase_credentials"]["client_email"],
             "client_id": st.secrets["firebase_credentials"]["client_id"],
             "auth_uri": st.secrets["firebase_credentials"]["auth_uri"],
