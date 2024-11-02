@@ -3,15 +3,15 @@ from firebase_admin import credentials, firestore
 import streamlit as st
 import json
 
-# Load the Firebase credentials from Streamlit Secrets as a JSON string
+# Parse the JSON string from Streamlit Secrets
 firebase_cred_dict = json.loads(st.secrets["firebase_credentials"])
 
-# Initialize Firebase with the parsed credentials dictionary
+# Initialize Firebase with the credentials dictionary
 firebase_cred = credentials.Certificate(firebase_cred_dict)
 firebase_admin.initialize_app(firebase_cred)
 db = firestore.client()
 
-# Remaining admin dashboard code
+# Example functions and Streamlit UI code below
 def add_client(email, expiry_date, permissions):
     username = email.split('@')[0]
     client_data = {
@@ -58,6 +58,5 @@ def admin_dashboard():
                 update_login_status(client_data['username'], 0)
                 st.success(f"Login status for {client_data['username']} has been reset.")
 
-# Run the admin dashboard
 if __name__ == "__main__":
     admin_dashboard()
