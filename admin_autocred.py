@@ -3,7 +3,7 @@ from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Initialize Firebase Admin SDK with Firestore
+# Initialize Firebase Admin SDK using Streamlit secrets
 if not firebase_admin._apps:
     firebase_cred = credentials.Certificate({
         "type": st.secrets["firebase"]["type"],
@@ -18,22 +18,21 @@ if not firebase_admin._apps:
         "client_x509_cert_url": st.secrets["firebase"]["client_x509_cert_url"]
     })
     firebase_admin.initialize_app(firebase_cred)
-
-# Firestore client
 db_firestore = firestore.client()
 
-# Function to add a client with email, expiry date, and permissions
+# Function to add a client with email, expiry date, and permissions only
 def add_client(email, expiry_date, permissions):
     username = email.split('@')[0]
     client_data = {
-        "username": username,
-        "password": "",
-        "expiry_date": expiry_date,
-        "permissions": permissions,
-        "email": email,
-        "login_status": 0
+        'username': username,
+        'password': '',  # Blank password initially
+        'expiry_date': expiry_date,
+        'permissions': permissions,
+        'email': email,
+        'login_status': 0  # Default to logged out
     }
     db_firestore.collection('clients').document(username).set(client_data)
+    st.success(f"Client with email '{email}' added successfully!")
 
 # Function to update login status (active/inactive)
 def update_login_status(username, status):
@@ -52,25 +51,25 @@ def admin_dashboard():
     if st.button("Add Client"):
         if email and dashboards:
             add_client(email, expiry_date.strftime('%Y-%m-%d'), dashboards)
-            st.success(f"Client with email '{email}' added successfully!")
         else:
             st.error("Please provide an email and select at least one dashboard.")
 
     st.write("---")
 
     # Display all clients with their email, permissions, and expiry dates
-    clients = db_firestore.collection('clients').stream()
+    clients_ref = db_firestore.collection('clients').stream()
     st.write("### Approved Clients:")
-    for client in clients:
+    for client in clients_ref:
         client_data = client.to_dict()
         login_status = "Logged In" if client_data['login_status'] == 1 else "Logged Out"
         st.write(f"**Username:** {client_data['username']} | **Email:** {client_data['email']} | **Expiry Date:** {client_data['expiry_date']} | **Dashboards Access:** {', '.join(client_data['permissions'])} | **Status:** {login_status}")
-
+        
         # Add a button to reset the login status for each client
         if login_status == "Logged In":
             if st.button(f"Reset Login Status for {client_data['username']}"):
                 update_login_status(client_data['username'], 0)
                 st.success(f"Login status for {client_data['username']} has been reset.")
+                st.experimental_rerun()  # Refresh to show updated status
 
 # Run the admin dashboard
 if __name__ == "__main__":
