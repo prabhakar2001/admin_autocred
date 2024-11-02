@@ -4,28 +4,8 @@ from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Initialize Firebase
-firebase_cred = credentials.Certificate({
-    "type": "service_account",
-    "project_id": "proj-58848",
-    "private_key_id": "68012f3a1525113d3d5ca7577d93d481fbca624b",
-    "private_key": """-----BEGIN PRIVATE KEY-----
-MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC4qAe969upjXIA
-jU2ABYEfo8QUmQ1nm32kvoeKDz99C+3CUtTAuUTZkp38vxXBizleHDjIdmdsdUIq
-FnGIaQTfUtTbjOVELXZZpKznXyWP/JdlfNlI5wo191/x1s2ePziRJTgCrGZ3jjls
-RMjJRxYAvSn7jkGKl+G/V2MYEeqQqUDKpL+JC0UlWMq8VxZ0nAevnSf5t2L+m4p7
-SZn25vGEQGKL1Eb6/xR0VrL2CPQ3A1PDUbfSqrl5d94pGlgoba5q0Ma1oYSdSe5l
-4gDyZjqPrX3DoqCj3yQnyQ4Ul2KvSVwaXPtq9cOgnkQn1o2zd6xkzb6CFkRTSA8G
-kbnUrKKVAgMBAAECggEAJ7yJBfa2a3MzwCioL89/bOaZ8HDLMKuGSyhxFGWZnPgv
-...
------END PRIVATE KEY-----\n""",
-    "client_email": "firebase-adminsdk-u5ghi@proj-58848.iam.gserviceaccount.com",
-    "client_id": "117984377403170508973",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-u5ghi%40proj-58848.iam.gserviceaccount.com"
-})
+# Load Firebase credentials from the JSON file
+firebase_cred = credentials.Certificate("firebase_key.json")
 firebase_admin.initialize_app(firebase_cred)
 db = firestore.client()
 
